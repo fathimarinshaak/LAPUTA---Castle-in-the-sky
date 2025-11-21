@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAPUTA</title>
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+        <style>
+            body {
+                margin: 0;
+                overflow: hidden;
+                box-sizing: border-box;
+            }
+            #gameArea {
+                width: 100vw;
+                height: 100vh;
+                background: url('/images/kikisdeliveryservice/bg.gif');
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: cover;
+                position: relative;
+            }
+            #kiki {
+                position: absolute;
+                width: 250px;
+                height: auto;
+                left: 20vw;
+                top: 40vh;
+            }
+            .obstacle {
+                position: absolute;
+                width: 100px;
+                height: 100px;
+            }
+            #message {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-size: 50px;
+                font-weight: bolder;
+                color: rgb(25, 24, 24);
+            }
+
+            @media only screen and (max-width: 600px) {
+               #kiki {
+                width: 150px;
+                left: 10vw;
+            }
+            .obstacle {
+                position: absolute;
+                width: 50px;
+                height: 50px;
+            }
+            #message {
+                font-size: 30px;
+            }
+            }
+        </style>
+    </head>
+<body>
+     
+  <div id="gameArea">
+    <%-include('../navbar')%>
+    <img id="kiki" src="/images/kikisdeliveryservice/Kiki.gif" class="img-fluid "/>
+    <div id="message" class="text-center">Press ENTER to Start</div>
+  </div>
+
+  <script>
+    let gameRunning = false;
+    let gravity = 0.4;
+    let lift = -8;
+    let velocity = 0;
+    let obstacles = [];
+
+    const kiki = document.getElementById("kiki");
+    const message = document.getElementById("message");
+    const gameArea = document.getElementById("gameArea");
+
+    let kikiY = window.innerHeight * 0.4;
+
+    function startGame() {
+      message.style.display = "none";
+      gameRunning = true;
+      velocity = 0;
+      obstacles.forEach(o => o.remove());
+      obstacles = [];
+      kikiY = window.innerHeight * 0.4;
+      loop();
+      spawnObstacle();
+    }
+
+    window.addEventListener("keydown", e => {
+      if (e.key === "Enter" && !gameRunning) startGame();
+      if (e.key === " " || e.key === "ArrowUp") velocity = lift;
+    });
+
+    function loop() {
+      if (!gameRunning) return;
+      velocity += gravity;
+      kikiY += velocity;
+      if (kikiY < -50 || kikiY > window.innerHeight) return gameOver();
+      kiki.style.top = kikiY + "px";
+
+      for (let i = obstacles.length - 1; i >= 0; i--) {
+        let obs = obstacles[i];
+        let x = parseFloat(obs.style.left);
+        x -= 3;
+        obs.style.left = x + "px";
+
+        if (x < -150) {
+            obs.remove();
+            obstacles.splice(i, 1);
+            continue;
+        }
+
+        let kRect = kiki.getBoundingClientRect();
+        let oRect = obs.getBoundingClientRect();
+    
+        let padding = 30
+        if (
+          kRect.right-padding > oRect.left+padding &&
+          kRect.left+padding < oRect.right-padding &&
+          kRect.top+padding < oRect.bottom-padding &&
+          kRect.bottom-padding > oRect.top+padding
+        ) {
+          return gameOver();
+        }
+      }
+      requestAnimationFrame(loop);
+    }
+
+    function spawnObstacle() {
+      if (!gameRunning) return;
+
+      let obs = document.createElement("img");
+      obs.src = "/images/kikisdeliveryservice/crow.gif"; 
+      obs.classList.add("obstacle");
+      obs.style.left = window.innerWidth + 'px';
+      obs.style.top = Math.random() * (window.innerHeight - 150) + "px";
+
+      gameArea.appendChild(obs);
+      obstacles.push(obs);
+      setTimeout(spawnObstacle, 2000);
+    }
+
+    function gameOver() {
+      gameRunning = false;
+      message.innerHTML = "Game Over<br>Press ENTER";
+      message.style.display = "block";
+    }
+  </script>
+</body>
+</html>

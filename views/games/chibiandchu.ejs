@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAPUTA</title>
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</head>
+
+<style>
+    body {
+        background-image: url('/images/chibiandchu/grassbg.jpg');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
+    #container {
+        width: 90vw;
+        max-width: 320px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px; 
+    }
+
+    .cell {
+        aspect-ratio: 1 / 1;
+        border: 3px solid transparent;
+        border-radius: 0px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgb(29, 77, 32);
+    }
+
+</style>
+<body class="vh-100 w-100">
+    <%-include('../navbar')%>
+    <div id="tictactoe" class="d-flex flex-column justify-content-evenly align-items-center h-75 w-100 ">
+
+        <h1 class="fw-bolder">TIC-TAC-TOE</h1>
+
+        <div id="container" >
+            <div class="cell" data-cellindex="0"></div>
+            <div class="cell" data-cellindex="1"></div>
+            <div class="cell" data-cellindex="2"></div>
+            <div class="cell" data-cellindex="3"></div>
+            <div class="cell" data-cellindex="4"></div>
+            <div class="cell" data-cellindex="5"></div>
+            <div class="cell" data-cellindex="6"></div>
+            <div class="cell" data-cellindex="7"></div>
+            <div class="cell" data-cellindex="8"></div>
+        </div>
+
+        <h2 id="status"></h2>
+        <button id="restart" class="btn btn-success d-inline-block fs-3 fw-bolder">RESTART</button>
+    </div>
+
+
+     <script>
+        const cells = document.querySelectorAll(".cell")
+        const statusText = document.getElementById("status")
+        const restartButton = document.getElementById("restart")
+
+        const players = {
+            x : {
+                name:"chu",
+                src:"/images/chibiandchu/chu.png"
+            },
+            o : {
+                name:"chibi",
+                src:"/images/chibiandchu/chibi.png"
+            }
+        }
+
+        let board = ["", "", "", "", "", "", "", "", ""]
+        let currentPlayer = players.x
+        console.log(currentPlayer)
+        let running = false
+
+        const winConditions = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ]
+
+        startGame()
+
+        function startGame() {
+            cells.forEach((cell)=>{ 
+                cell.addEventListener("click", cellClicked)
+            })
+            restartButton.addEventListener("click", restartGame)
+            statusText.innerText = `Turn: ${currentPlayer.name}`
+            running = true
+        }
+
+        function cellClicked() {
+            const index = this.dataset.cellindex
+            if (board[index] !== "" || !running){
+                return
+            }
+
+            board[index] = currentPlayer
+            this.innerHTML = `<img src="${currentPlayer.src}" alt="chu" style="width:100%; height:100%; object-fit:cover;">`
+
+
+            if (checkWinner()) {
+                statusText.innerText = `${currentPlayer.name} Wins!`
+                statusText.style.color='red'
+                running = false;
+            } else if (board.every(cell => cell !== "")) {
+                statusText.innerText = "Draw!"
+                statusText.style.color='red'
+                running = false;
+            } else {
+                statusText.style.color='black'
+                changePlayer()
+            }
+        }
+
+        function checkWinner() {
+            return winConditions.some(condition => {
+                return condition.every(index => board[index] === currentPlayer)
+            });
+        }
+
+        function changePlayer(){
+            currentPlayer = currentPlayer === players.x ? players.o : players.x
+            statusText.innerText = `Turn: ${currentPlayer.name}`
+        }
+
+        function restartGame() {
+            board = ["", "", "", "", "", "", "", "", ""]
+            currentPlayer = players.x
+            running = true
+            statusText.innerText = `Turn: ${currentPlayer.name}`
+
+            cells.forEach(cell => {
+                cell.innerText = ""
+            })
+        }
+    
+    </script>
+
+</body>
+
+</html>
+

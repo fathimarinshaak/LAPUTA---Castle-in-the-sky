@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAPUTA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Gochi+Hand&family=Homemade+Apple&family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        #hero{
+            background-image: url('../images/8c32482975c594006d92f4c0a3102d3c.gif');
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+        }
+        .game-card:hover{
+            transform: scale(1.1);
+        }
+        .game-card{
+            background-color: rgb(69, 95, 69);
+        }
+        img{
+            width: 250px;
+            height: auto;
+        }
+        #text{
+            font-size: 25px;
+        }
+        #section2{
+            background-color: rgb(188, 218, 186)
+        }
+       
+        @media only screen and (max-width: 600px){
+            img{
+                width: 150px;
+            }
+            #text{
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body class="">
+    
+    <section id="hero" class="vh-100 w-100 pt-5">
+       <%-include('navbar')%>
+    </section>
+
+    <section id="section2" class="vh-100 p-5">
+
+        <a href="/games" class="d-flex justify-content-center align-items-center pt-5 gap-4 text-decoration-none text-dark">
+            <h1 class="h1 text-center fw-bold">PLAY GAMES</h1>
+            <i class="bi bi-arrow-right fs-1 fw-bold"></i>
+        </a>
+
+        
+        <div id="container" class="position-relative h-75 w-100 d-flex justify-content-center align-items-center">
+
+            <button id="slideLeft" class="btn fs-6 btn-outline-dark position-absolute top-40 start-0 m-3" type="button">
+                <i class="bi bi-caret-left-fill"></i>
+            </button>
+            <button id="slideRight" class="btn fs-6 btn-outline-dark position-absolute top-40 end-0 m-3" type="button">
+                <i class="bi bi-caret-right-fill"></i>
+            </button>
+
+            <div id="games" class="h-100 w-75 d-flex align-items-center gap-5 overflow-x-auto overflow-y-hidden flex-nowrap">
+                <% games.forEach((game,i)=>{ %>
+                <div class="h-auto game-card shadow p-2 p-md-4 border rounded-4 flex-shrink-0">
+                    <a href="<%= game.route%>" class="h-100 d-flex flex-column justify-content-center align-items-center text-decoration-none text-black">
+                        <img src="<%= game.thumbnail%>" alt="<%= game.name%>" class="border rounded-5">
+                        <span class="fw-bold text-dark" id="text"><%= game.name%></span>
+                    </a>
+                </div>
+                <% }) %>
+            </div>
+        </div>
+        
+    </section>
+
+
+    <script>
+
+        const buttonRight = document.getElementById('slideRight')
+        const buttonLeft = document.getElementById('slideLeft')
+
+        buttonRight.onclick = function () {
+        document.getElementById('games').scrollLeft += 300
+        }
+        buttonLeft.onclick = function () {
+        document.getElementById('games').scrollLeft -= 300
+        }
+    </script>
+   
+</body>
+</html>
