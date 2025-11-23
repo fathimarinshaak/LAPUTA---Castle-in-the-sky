@@ -13,6 +13,10 @@ const games = require('./model/games')
 
 app.use('/games',gameRoute)
 
+app.get('/about',(req,res)=>{
+    return res.render('aboutpage')
+})
+
 app.get('/',(req,res)=>{
     return res.render('homepage',{games})
 })
